@@ -1,3 +1,4 @@
+using System.Xml.Linq;
 namespace Assignment.Infrastructure;
 using Assignment.Core;
 public class TagRepository : ITagRepository
@@ -31,7 +32,7 @@ public class TagRepository : ITagRepository
 
     }
 
-    public IReadOnlyCollection<TagDTO> ReadAll()
+    public IReadOnlyCollection<TagDTO> Read()
     {
         var tags = from t in _context.Tags
                      orderby t.Name
@@ -40,7 +41,7 @@ public class TagRepository : ITagRepository
         return tags.ToArray();
     }
 
-    public TagDTO Read(int tagId)
+    public TagDTO Find(int tagId)
     {
         var tags = from t in _context.Tags
                     where t.Id == tagId
@@ -83,7 +84,7 @@ public class TagRepository : ITagRepository
         {
             response = Response.NotFound;
         }
-        else if (tag.Tasks!.Any() && !force)
+        else if (tag.WorkItems!.Any() && !force)
         {
             response = Response.Conflict;
         }
