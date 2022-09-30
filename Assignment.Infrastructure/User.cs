@@ -8,12 +8,12 @@ public class User
     [EmailAddress]
     public string Email { get; set; }
 
-    public ICollection<WorkItem> Items { get; set; }
+    public ICollection<WorkItem> WorkItems { get; set; }
 
     public User(string name, string email)
     {
         Name = name;
         Email = email;
-        Items = new HashSet<WorkItem>();
+        WorkItems = new HashSet<WorkItem>();
     }
 }
