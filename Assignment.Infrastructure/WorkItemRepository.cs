@@ -9,7 +9,7 @@ public class WorkItemRepository : IWorkItemRepository
         _context = context;
     }
 
-    public (Response Response, int WorkItemId) Create(WorkItemCreateDTO WorkItem)
+    public (Response Response, int ItemId) Create(WorkItemCreateDTO WorkItem)
     {
         Response response;
         int WorkItemId;
@@ -29,7 +29,7 @@ public class WorkItemRepository : IWorkItemRepository
             Description = WorkItem.Description,
             Created = DateTime.Now,
             State = State.New,
-            tags = tagsList,
+            Tags = tagsList,
             StateUpdated = DateTime.Now
         };
         if (entity.AssignedTo == null)
@@ -41,42 +41,42 @@ public class WorkItemRepository : IWorkItemRepository
         response = Response.Created;
         return (response, entity.Id);
     }
-    public IReadOnlyCollection<WorkItemDTO> ReadAll()
+    public IReadOnlyCollection<WorkItemDTO> Read()
     {
         var WorkItemCollection =    from t in _context.WorkItems
-                                select new WorkItemDTO(t.Id, t.Title, t.AssignedTo.Name, t.tags.Select(x => new string(x.Name)).ToArray(), t.State);
+                                select new WorkItemDTO(t.Id, t.Title, t.AssignedTo.Name, t.Tags.Select(x => new string(x.Name)).ToArray(), t.State);
         return new ReadOnlyCollection<WorkItemDTO>(WorkItemCollection.ToList());
     }
-    public IReadOnlyCollection<WorkItemDTO> ReadAllRemoved()
+    public IReadOnlyCollection<WorkItemDTO> ReadRemoved()
     {
         var WorkItemCollection =    from t in _context.WorkItems
                                 where t.State == State.Removed
-                                select new WorkItemDTO(t.Id, t.Title, t.AssignedTo.Name, t.tags.Select(x => new string(x.Name)).ToArray(), t.State);
+                                select new WorkItemDTO(t.Id, t.Title, t.AssignedTo.Name, t.Tags.Select(x => new string(x.Name)).ToArray(), t.State);
         return new ReadOnlyCollection<WorkItemDTO>(WorkItemCollection.ToList());
     }
-    public IReadOnlyCollection<WorkItemDTO> ReadAllByTag(string tag)
+    public IReadOnlyCollection<WorkItemDTO> ReadByTag(string tag)
     {
         throw new NotImplementedException();
     }
-    public IReadOnlyCollection<WorkItemDTO> ReadAllByUser(int userId)
+    public IReadOnlyCollection<WorkItemDTO> ReadByUser(int userId)
     {
         var WorkItemCollection =    from t in _context.WorkItems
                                 where t.AssignedTo.Id == userId
-                                select new WorkItemDTO(t.Id, t.Title, t.AssignedTo.Name, t.tags.Select(x => new string(x.Name)).ToArray(), t.State);
+                                select new WorkItemDTO(t.Id, t.Title, t.AssignedTo.Name, t.Tags.Select(x => new string(x.Name)).ToArray(), t.State);
         return new ReadOnlyCollection<WorkItemDTO>(WorkItemCollection.ToList());
     }
-    public IReadOnlyCollection<WorkItemDTO> ReadAllByState(State state)
+    public IReadOnlyCollection<WorkItemDTO> ReadByState(State state)
     {
         var WorkItemCollection =    from t in _context.WorkItems
                                 where t.State == state
-                                select new WorkItemDTO(t.Id, t.Title, t.AssignedTo.Name, t.tags.Select(x => new string(x.Name)).ToArray(), t.State);
+                                select new WorkItemDTO(t.Id, t.Title, t.AssignedTo.Name, t.Tags.Select(x => new string(x.Name)).ToArray(), t.State);
         return new ReadOnlyCollection<WorkItemDTO>(WorkItemCollection.ToList());
     }
-    public WorkItemDetailsDTO Read(int WorkItemId)
+    public WorkItemDetailsDTO Find(int WorkItemId)
     {
         var WorkItems = from t in _context.WorkItems
                     where t.Id == WorkItemId
-                    select new WorkItemDetailsDTO(t.Id, t.Title, t.Description, t.Created, t.AssignedTo.Name, t.tags.Select(x => new string(x.Name)).ToArray(), t.State, t.StateUpdated);
+                    select new WorkItemDetailsDTO(t.Id, t.Title, t.Description, t.Created, t.AssignedTo.Name, t.Tags.Select(x => new string(x.Name)).ToArray(), t.State, t.StateUpdated);
 
         return WorkItems.FirstOrDefault();
     }
@@ -107,7 +107,7 @@ public class WorkItemRepository : IWorkItemRepository
                     tagsList.Add(t);
                 }
             }
-            entity.tags = tagsList;
+            entity.Tags = tagsList;
             if (entity.State != WorkItem.State)
             {
                 entity.StateUpdated = DateTime.Now;

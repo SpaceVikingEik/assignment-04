@@ -131,7 +131,7 @@ public class WorkItemRepositoryTests
         _repository.Update(new WorkItemUpdateDTO(1, "Laundry", 1, "Do the laundry", new List<string>(){"HelloThere"}, State.Resolved));
         DateTime expectedTime = DateTime.Now;
         //Act
-        DateTime actualTime = _repository.Read(1).StateUpdated;
+        DateTime actualTime = _repository.Find(1).StateUpdated;
         //Assert
         actualTime.Should().BeCloseTo(expectedTime, precision: TimeSpan.FromSeconds(5));
     }
