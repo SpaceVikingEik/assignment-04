@@ -16,8 +16,8 @@ public class WorkItemRepositoryTests
         var context = new KanbanContext(builder.Options);
         context.Database.EnsureCreated();
         var user1 = new User { Id = 1, Name = "ObiWan", Email = "DankRepublic@corusant.com", WorkItems = new List<Assignment.Infrastructure.WorkItem> { } };
-        var WorkItems1 = new WorkItem { Id = 1, Title = "HewwoTwere", AssignedTo = user1, Description = "uwu the owo", Created = DateTime.Now, State = State.New, tags = new List<Tag> { } , StateUpdated = DateTime.Now};
-        var WorkItems2 = new WorkItem { Id = 2, Title = "Hi", AssignedTo = user1, Description = "hello there", Created = DateTime.Now,  State = State.Active, tags = new List<Tag> { } , StateUpdated = DateTime.Now};
+        var WorkItems1 = new WorkItem { Id = 1, Title = "HewwoTwere", AssignedTo = user1, Description = "uwu the owo", Created = DateTime.Now, State = State.New, Tags = new List<Tag> { } , StateUpdated = DateTime.Now};
+        var WorkItems2 = new WorkItem { Id = 2, Title = "Hi", AssignedTo = user1, Description = "hello there", Created = DateTime.Now,  State = State.Active, Tags = new List<Tag> { } , StateUpdated = DateTime.Now};
         var tag1 = new Tag { Id = 1, Name = "HelloThere", WorkItems = new List<Assignment.Infrastructure.WorkItem> { } };
         WorkItems1.Tags.Add(tag1);
         user1.WorkItems.Add(WorkItems1);
@@ -85,7 +85,7 @@ public class WorkItemRepositoryTests
         //Act
         _repository.Delete(2);
         //Assert
-        _repository.Read(2).State.Should().Be(expectedState);
+        _repository.Find(2).State.Should().Be(expectedState);
     }
 
     [Fact]
@@ -96,7 +96,7 @@ public class WorkItemRepositoryTests
         //Act
         _repository.Create(new WorkItemCreateDTO("Laundry", 1, "do the laundry!", new List<string>()));
         //Assert
-        _repository.Read(3).State.Should().Be(expectedState);
+        _repository.Find(3).State.Should().Be(expectedState);
     }
 
     [Fact]
@@ -104,8 +104,8 @@ public class WorkItemRepositoryTests
     {
         //Arrange
         _repository.Create(new WorkItemCreateDTO("Laundry", 1, "do the laundry!", new List<string>()));
-        var actualTime1 = _repository.Read(2).Created;
-        var actualTime2 = _repository.Read(2).StateUpdated;
+        var actualTime1 = _repository.Find(2).Created;
+        var actualTime2 = _repository.Find(2).StateUpdated;
         var expectedTime = DateTime.Now;
 
         //Assert
@@ -121,7 +121,7 @@ public class WorkItemRepositoryTests
         //Act
         _repository.Update(new WorkItemUpdateDTO(1, "Laundry", 1, "Do the laundry", new List<string>(){"HelloThere"}, State.Resolved));
         //Assert
-        _repository.Read(1).Tags.Should().BeEquivalentTo(expectedTags);
+        _repository.Find(1).Tags.Should().BeEquivalentTo(expectedTags);
     }
 
     [Fact]
@@ -151,7 +151,7 @@ public class WorkItemRepositoryTests
     public void read_returns_null_when_searching_for_nonexisting_WorkItem()
     {
         //Act
-        WorkItemDetailsDTO Actual = _repository.Read(25);
+        WorkItemDetailsDTO Actual = _repository.Find(25);
         //Assert
         Actual.Should().BeNull();
     }
@@ -162,7 +162,7 @@ public class WorkItemRepositoryTests
         //Arrange
         var expectedLength = 2;
         //Act
-        var actualList = _repository.ReadAll();
+        var actualList = _repository.Read();
         //Assert
         actualList.Count().Should().Be(expectedLength);
     }
@@ -174,7 +174,7 @@ public class WorkItemRepositoryTests
         var expectedLength = 1;
         //Act
         _repository.Delete(2);
-        var actualList = _repository.ReadAllRemoved();
+        var actualList = _repository.ReadRemoved();
         //Assert
         actualList.Count().Should().Be(expectedLength);
     }
