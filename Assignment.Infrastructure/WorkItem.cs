@@ -21,11 +21,5 @@ public class WorkItem
 
     public ICollection<Tag> Tags { get; set; }
 
-    public WorkItem(string title)
-    {
-        Title = title;
-        Tags = new HashSet<Tag>();
-    }
-
     
 }
